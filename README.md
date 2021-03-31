@@ -16,6 +16,7 @@ This application stores user's favorite books in local mongoDB database.
 ## Change Log
 
 03-30-2021 4:21pm - Application now has a fully-functional express server, with a GET route for the location resource .and a connection to local MongoDB database.
+03-31-2021 3:30pm - Added a post and delete route.
 
 ## Credit and Collaborations
 
@@ -42,5 +43,29 @@ Estimate of time needed to complete: 1 hour
 Start time: 1:45pm
 
 Finish time: 2:45pm
+
+Actual time needed to complete: 1 hour
+
+***
+
+Name of feature: Create a book
+
+Estimate of time needed to complete: 1 hour
+
+Start time: 1:30pm
+
+Finish time: 2:30pm
+
+Actual time needed to complete: 1 hour
+
+***
+
+Name of feature: Delete a book
+
+Estimate of time needed to complete: 1 hour
+
+Start time: 2:30pm
+
+Finish time: 3:30pm
 
 Actual time needed to complete: 1 hour
