@@ -1,14 +1,16 @@
 'use strict';
 
-const express = require('express');
-
 require('dotenv').config();
+
+const express = require('express');
 
 const app = express();
 
 const cors = require('cors');
 
 app.use(cors());
+
+app.use(express.json());
 
 const PORT = process.env.PORT || 3002;
 
@@ -24,28 +26,56 @@ db.once('open', function() {
 
 const User = require('./models/User');
 
-const peter = new User({
-  email: 'peterjast@gmail.com',
-  books: [{name: 'The Life You Can Save', description: 'It\'s a book', status: 'definitely a book'}, {name: 'A Critique of Pure Reason', description: 'It\'s a book', status: 'definitely a book'}, {name: 'The Great Gatsby', description: 'It\'s a book', status: 'definitely a book'}]
-});
-peter.save();
+// const peter = new User({
+//   email: 'peterjast@gmail.com',
+//   books: [{name: 'The Life You Can Save', description: 'It\'s a book', status: 'definitely a book'}, {name: 'A Critique of Pure Reason', description: 'It\'s a book', status: 'definitely a book'}, {name: 'The Great Gatsby', description: 'It\'s a book', status: 'definitely a book'}]
+// });
+// peter.save();
 
-const chris = new User({
-  email: 'gantt.art@gmail.com',
-  books: [{name: 'The Alchemist', description: 'It\'s a book', status: 'definitely a book'}, {name: 'The Giver', description: 'It\'s a book', status: 'definitely a book'}, {name: 'Life of Pi', description: 'It\'s a book', status: 'definitely a book'}]
-});
-chris.save();
+// const chris = new User({
+//   email: 'gantt.art@gmail.com',
+//   books: [{name: 'The Alchemist', description: 'It\'s a book', status: 'definitely a book'}, {name: 'The Giver', description: 'It\'s a book', status: 'definitely a book'}, {name: 'Life of Pi', description: 'It\'s a book', status: 'definitely a book'}]
+// });
+// chris.save();
 
 app.get('/books', getBooks);
 
-async function getBooks(request, response) {
-    const email = request.query.email;
-    console.log({email})
-    await User.find({email: email}, function (err, items) {
-        if (err) return console.error(err);
-        console.log(items[0].books);
-        response.status(200).send(items[0].books);
-    })
+app.post('/books', addABook);
+
+app.delete('/books/:index', deleteABook);
+
+function getBooks(request, response) {
+  const email = request.query.email;
+  console.log({email});
+  User.find({email: email}, function (err, items) {
+    if (err) return console.error(err);
+    console.log(items[0].books);
+    response.status(200).send(items[0].books);
+  });
+}
+
+function addABook(request, response) {
+  console.log('request body', request.body);
+  const email = request.body.email;
+  const book = { name: request.body.bookName, description: request.body.bookDescription, status: request.body.bookStatus};
+  User.findOne({ email }, (err, entry) => {
+    if(err) return console.log(err.message);
+    entry.books.push(book);
+    entry.save();
+    response.stats(200).send(entry.books);
+  });
+}
+
+function deleteABook(request, response) {
+  const index = parseInt(request.params.index);
+  const email = request.query.email;
+  User.findOne({ email }, (err, entry) => {
+    if(err) return console.log(err.message);
+    const newBookArr = entry.books.filter((book, i) => i !== index);
+    entry.books = newBookArr;
+    entry.save();
+    response.status(200).send('Destroyed!');
+  });
 }
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
