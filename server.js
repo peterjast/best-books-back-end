@@ -57,12 +57,13 @@ function getBooks(request, response) {
 function addABook(request, response) {
   console.log('request body', request.body);
   const email = request.body.email;
-  const book = { name: request.body.bookName, description: request.body.bookDescription, status: request.body.bookStatus};
+  console.log(email);
+  const book = { name: request.body.name, description: request.body.description, status: request.body.status};
   User.findOne({ email }, (err, entry) => {
     if(err) return console.log(err.message);
     entry.books.push(book);
     entry.save();
-    response.stats(200).send(entry.books);
+    response.status(200).send(entry.books);
   });
 }
 
