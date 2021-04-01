@@ -44,6 +44,8 @@ app.post('/books', addABook);
 
 app.delete('/books/:index', deleteABook);
 
+app.put('/books/:index', updateABook);
+
 function getBooks(request, response) {
   const email = request.query.email;
   console.log({email});
@@ -76,6 +78,21 @@ function deleteABook(request, response) {
     entry.books = newBookArr;
     entry.save();
     response.status(200).send('Destroyed!');
+  });
+}
+
+function updateABook(request, response) {
+  const index = parseInt(request.params.index);
+  const book = { name: request.body.name, description: request.body.description, status: request.body.status };
+  const email = request.body.email;
+  console.log('request body', request.body);
+  console.log('request index', request.params.index);
+  User.findOne({ email }, (err, entry) => {
+    if(err) return console.log(err.message);
+    entry.books.splice(index, 1, book);
+    entry.save();
+    console.log('books?', entry.books);
+    response.status(200).send(entry.books);
   });
 }
 
